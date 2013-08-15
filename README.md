@@ -1,4 +1,4 @@
-airybox
+AiryBox
 =======
 
 A practical application to demonstrate IBP technology.
