@@ -23,4 +23,4 @@ There are three basic kinds of IBP cloud service models.
 Identity management and access control is based on OAuth 2.0 or OpenID Connect in all three cases.
 
 
-AiryBox (model num. 3) will be fully open sourced in November-December, 2013.
+AiryBox (3) will be fully open sourced in November-December, 2013.
