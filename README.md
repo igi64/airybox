@@ -16,16 +16,16 @@ There are four basic kinds of IBP cloud service models.
 	All data are passing through your encryption proxy service running on premises and stored on public AiryBox cloud data storage.
 	Encryption keys are generated on your corporate or home computer, tablet or smartphone.
 	
-3.) Public Cloud Data Storage/Personal Key Generator + Personal Data Storage.
+3.) Public Cloud Data Storage/Personal Key Generator + Private Cloud Data Storage.
 	Directory and file information are stored encrypted in AiryBox public cloud data storage, but real files are stored on premises where can be shared as WebDAV drive.
 	Files can be also accessed and managed through web-based file manager elFinder. Directory and file information are encrypted directly in your browser.
 	Encryption keys are generated on your corporate or home computer, tablet or smartphone.
 
-4.) Public Cloud Data Storage/Personal Data Storage.
-	Only basic information about private clouds location is stored in AiryBox public cloud data storage. 
+4.) Public Cloud Data Storage/Private Cloud Data Storage.
+	Only basic information about private data storage location is stored in AiryBox public cloud data storage. 
 	All directory, file information and real files are stored on premises where can be shared as WebDAV drive.
 	Files can be also accessed and managed through web-based file manager elFinder. There is no encryption service.
-	Personal Cloud in combination with identity management/access control guarantees your data privacy. 
+	Private Cloud Data Storage in combination with identity management/access control guarantees your data privacy. 
 	
 
 AiryBox (3/4) will be fully open sourced in November-December, 2013.
