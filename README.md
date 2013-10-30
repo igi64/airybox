@@ -28,4 +28,4 @@ There are four basic kinds of IBP cloud service models.
 	Personal Cloud in combination with identity management/access control guarantees your data privacy. 
 	
 
-AiryBox (4) will be fully open sourced in November-December, 2013.
+AiryBox (3/4) will be fully open sourced in November-December, 2013.
