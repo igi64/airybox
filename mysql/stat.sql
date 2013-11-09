@@ -11,11 +11,12 @@ SELECT  fldl.id AS `id`,
 		0 AS `width`,
 		0 AS `height`,
 		IF (fldlch.id, 1, 0) AS dirs 
-FROM    tb_folder_link fldl 
+FROM tb_folder_link fldl 
+		LEFT JOIN tb_folder_link AS fldlp ON fldlp.id=fldl.parent_id
 		LEFT JOIN tb_folder_link AS fldlch ON fldlch.parent_id=fldl.id
 		LEFT JOIN tb_user AS usr ON usr.id=fldl.user_id
 		LEFT JOIN tb_folder AS fld ON fld.id=fldl.folder_id
-WHERE fldl.parent_id = '1' AND usr.email = 'izboran@gmail.com'
+WHERE fldl.id = '1' AND usr.email = 'izboran@gmail.com'
 GROUP BY fldl.id
 UNION
 SELECT  fll.id AS `id`,
@@ -34,4 +35,4 @@ SELECT  fll.id AS `id`,
 FROM    tb_file_link fll 
 		LEFT JOIN tb_user AS usr ON usr.id=fll.user_id
 		LEFT JOIN tb_file AS fl ON fl.id=fll.file_id
-WHERE fll.parent_id = '1' AND usr.email = 'izboran@gmail.com'; 
+WHERE fll.id = '1' AND usr.email = 'izboran@gmail.com';
