@@ -1,4 +1,4 @@
-SELECT  fldl.id AS `id`,
+SELECT  fldl.folder_id AS `id`,
         fldl.parent_id AS `parent_id`,
 		fldl.name AS `name`,
 		0 AS `size`,
@@ -12,13 +12,13 @@ SELECT  fldl.id AS `id`,
 		0 AS `height`,
 		IF (fldlch.id, 1, 0) AS dirs 
 FROM    tb_folder_link fldl 
-		LEFT JOIN tb_folder_link AS fldlch ON fldlch.parent_id=fldl.id
+		LEFT JOIN tb_folder_link AS fldlch ON fldlch.parent_id=fldl.folder_id
 		LEFT JOIN tb_user AS usr ON usr.id=fldl.user_id
 		LEFT JOIN tb_folder AS fld ON fld.id=fldl.folder_id
 WHERE fldl.parent_id = '1' AND usr.email = 'izboran@gmail.com'
-GROUP BY fldl.id
+GROUP BY fldl.folder_id
 UNION
-SELECT  fll.id AS `id`,
+SELECT  fl.id AS `id`,
         fll.parent_id AS `parent_id`,
 		fll.name AS `name`,
 		fl.size AS `size`,

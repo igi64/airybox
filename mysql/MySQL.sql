@@ -107,37 +107,37 @@ CREATE TABLE IF NOT EXISTS `tb_folder_link` (
   PRIMARY KEY (`id`),
   UNIQUE KEY  `uk_user_parent_name` (`user_id`, `parent_id`, `name`),
   CONSTRAINT  `fk_folder_link_user_id` FOREIGN KEY (user_id) REFERENCES tb_user(id) ON DELETE CASCADE,
-  CONSTRAINT  `fk_folder_link_parent_id` FOREIGN KEY (parent_id) REFERENCES tb_folder_link(id) ON DELETE CASCADE,
+  CONSTRAINT  `fk_folder_link_parent_id` FOREIGN KEY (parent_id) REFERENCES tb_folder(id) ON DELETE CASCADE,
   CONSTRAINT  `fk_folder_link_folder_id` FOREIGN KEY (folder_id) REFERENCES tb_folder(id) ON DELETE CASCADE
-) AUTO_INCREMENT=1 ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+) AUTO_INCREMENT=1001 ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 INSERT INTO `tb_folder_link`
 (`id`, `user_id`, `parent_id`, `folder_id`, `name`,        `read`, `write`) VALUES 
-('1',  '1',        NULL,         '1',       'My Disk',     '1',    '1');
+('1001',  '1',        NULL,         '1',       'My Disk',     '1',    '1');
 INSERT INTO `tb_folder_link`
 (`id`, `user_id`, `parent_id`, `folder_id`, `name`,        `read`, `write`) VALUES 
-('2',  '1',         '1',         '2',       'dir1',        '1',    '1');
+('1002',  '1',         '1',         '2',       'dir1',        '1',    '1');
 INSERT INTO `tb_folder_link`
 (`id`, `user_id`, `parent_id`, `folder_id`, `name`,        `read`, `write`) VALUES 
-('3',  '1',         '1',         '3',       'dir11',       '1',    '1');
+('1003',  '1',         '1',         '3',       'dir11',       '1',    '1');
 INSERT INTO `tb_folder_link`
 (`id`, `user_id`, `parent_id`, `folder_id`, `name`,        `read`, `write`) VALUES 
-('4',  '1',         '1',         '4',       'dir2',        '1',    '1');
+('1004',  '1',         '1',         '4',       'dir2',        '1',    '1');
 INSERT INTO `tb_folder_link`
 (`id`, `user_id`, `parent_id`, `folder_id`, `name`,        `read`, `write`) VALUES 
-('5',  '1',         '1',         '5',       'emptydir',    '1',    '1');
+('1005',  '1',         '1',         '5',       'emptydir',    '1',    '1');
 INSERT INTO `tb_folder_link`
 (`id`, `user_id`, `parent_id`, `folder_id`, `name`,        `read`, `write`) VALUES 
-('6',  '1',         '1',         '6',       'nonemptydir', '1',    '1');
+('1006',  '1',         '1',         '6',       'nonemptydir', '1',    '1');
 INSERT INTO `tb_folder_link`
 (`id`, `user_id`, `parent_id`, `folder_id`, `name`,        `read`, `write`) VALUES 
-('7',  '1',         '1',         '7',       'walk',        '1',    '1');
+('1007',  '1',         '1',         '7',       'walk',        '1',    '1');
 INSERT INTO `tb_folder_link`
 (`id`, `user_id`, `parent_id`, `folder_id`, `name`,        `read`, `write`) VALUES 
-('8',  '1',         '7',         '8',       'dir1',        '1',    '1');
+('1008',  '1',         '7',         '8',       'dir1',        '1',    '1');
 INSERT INTO `tb_folder_link`
 (`id`, `user_id`, `parent_id`, `folder_id`, `name`,        `read`, `write`) VALUES 
-('9',  '1',         '7',         '9',      'dir2',        '1',    '1');
+('1009',  '1',         '7',         '9',      'dir2',        '1',    '1');
 
 CREATE TABLE `tb_file_link` (
   `id`        int(10) unsigned NOT NULL AUTO_INCREMENT,
@@ -150,40 +150,40 @@ CREATE TABLE `tb_file_link` (
   PRIMARY KEY (`id`),
   UNIQUE KEY  `uk_user_parent_name` (`user_id`, `parent_id`, `name`),
   CONSTRAINT  `fk_file_link_user_id` FOREIGN KEY (user_id) REFERENCES tb_user(id) ON DELETE CASCADE,
-  CONSTRAINT  `fk_file_link_parent_id` FOREIGN KEY (parent_id) REFERENCES tb_folder_link(id) ON DELETE CASCADE,
+  CONSTRAINT  `fk_file_link_parent_id` FOREIGN KEY (parent_id) REFERENCES tb_folder(id) ON DELETE CASCADE,
   CONSTRAINT  `fk_file_link_file_id` FOREIGN KEY (file_id) REFERENCES tb_file(id) ON DELETE CASCADE
-) AUTO_INCREMENT=1000000001 ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+) AUTO_INCREMENT=1000001001 ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 INSERT INTO `tb_file_link`
 (`id`,          `user_id`, `parent_id`, `file_id`,          `name`,   `read`, `write`) VALUES 
-('1000000001',  '1',       '2',         '1000000001',       '1.txt',  '1',    '1');
+('1000001001',  '1',       '2',         '1000000001',       '1.txt',  '1',    '1');
 INSERT INTO `tb_file_link`
 (`id`,          `user_id`, `parent_id`, `file_id`,          `name`,   `read`, `write`) VALUES 
-('1000000002',  '1',       '3',         '1000000002',       '11.txt', '1',    '1');
+('1000001002',  '1',       '3',         '1000000002',       '11.txt', '1',    '1');
 INSERT INTO `tb_file_link`
 (`id`,          `user_id`, `parent_id`, `file_id`,          `name`,   `read`, `write`) VALUES 
-('1000000003',  '1',       '4',         '1000000003',       '2.txt',  '1',    '1');
+('1000001003',  '1',       '4',         '1000000003',       '2.txt',  '1',    '1');
 INSERT INTO `tb_file_link`
 (`id`,          `user_id`, `parent_id`, `file_id`,          `name`,   `read`, `write`) VALUES 
-('1000000004',  '1',       '6',         '1000000004',       '4.txt',  '1',    '1');
+('1000001004',  '1',       '6',         '1000000004',       '4.txt',  '1',    '1');
 INSERT INTO `tb_file_link`
 (`id`,          `user_id`, `parent_id`, `file_id`,          `name`,   `read`, `write`) VALUES 
-('1000000005',  '1',       '8',         '1000000005',       '1.txt',  '1',    '1');
+('1000001005',  '1',       '8',         '1000000005',       '1.txt',  '1',    '1');
 INSERT INTO `tb_file_link`
 (`id`,          `user_id`, `parent_id`, `file_id`,          `name`,   `read`, `write`) VALUES 
-('1000000006',  '1',       '9',         '1000000006',       '2.txt',  '1',    '1');
+('1000001006',  '1',       '9',         '1000000006',       '2.txt',  '1',    '1');
 INSERT INTO `tb_file_link`
 (`id`,          `user_id`, `parent_id`, `file_id`,          `name`,   `read`, `write`) VALUES 
-('1000000007',  '1',       '7',         '1000000007',       '1.txt',  '1',    '1');
+('1000001007',  '1',       '7',         '1000000007',       '1.txt',  '1',    '1');
 INSERT INTO `tb_file_link`
 (`id`,          `user_id`, `parent_id`, `file_id`,          `name`,   `read`, `write`) VALUES 
-('1000000008',  '1',       '1',         '1000000008',       '1.txt',  '1',    '1');
+('1000001008',  '1',       '1',         '1000000008',       '1.txt',  '1',    '1');
 INSERT INTO `tb_file_link`
 (`id`,          `user_id`, `parent_id`, `file_id`,          `name`,   `read`, `write`) VALUES 
-('1000000009',  '1',       '1',         '1000000009',       '11.txt', '1',    '1');
+('1000001009',  '1',       '1',         '1000000009',       '11.txt', '1',    '1');
 INSERT INTO `tb_file_link`
 (`id`,          `user_id`, `parent_id`, `file_id`,          `name`,   `read`, `write`) VALUES 
-('1000000010',  '1',       '1',         '1000000010',       '2.txt', '1',    '1');
+('1000001010',  '1',       '1',         '1000000010',       '2.txt', '1',    '1');
 INSERT INTO `tb_file_link`
 (`id`,          `user_id`, `parent_id`, `file_id`,          `name`,   `read`, `write`) VALUES 
-('1000000011',  '1',       '1',         '1000000011',       '3.txt', '1',    '1');
+('1000001011',  '1',       '1',         '1000000011',       '3.txt', '1',    '1');
