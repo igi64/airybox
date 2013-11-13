@@ -1,5 +1,6 @@
 CREATE VIEW vw_elfinder_file_file AS
 SELECT  fl.id AS `id`,
+				usr.id AS `user_id`,
         fll.parent_id AS `parent_id`,
 		fll.name AS `name`,
 		fl.content AS `content`,

@@ -449,17 +449,17 @@ if (isset($_GET['user_id'])) {
 }
 
 if (empty($user_id)) {
-    $user_id = 'localhost@localdomain';
+    $user_id = '1'; // '1' for test
 };
 
 if (!empty($user_id)) {
     foreach ($opts['roots'] as $i => $o) {
-        $o['path'] = $o['path'].$user_id;
+        //$o['path'] = $o['path'].$user_id;
         if (!empty($o['URL'])) {
             //$o['URL'] = substr($_SERVER['REQUEST_URI'], 0, strlen("elfinder/") + 1).$o['URL'].$user_id."/";
             $o['URL'] = $o['URL'].$user_id."/";
         }
-        $o['user_id'] = $user_id;
+        $opts['roots'][$i]['user_id'] = $user_id;
     }
 };
 

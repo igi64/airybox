@@ -69,7 +69,8 @@ class elFinderVolumeMySQL extends elFinderVolumeDriver {
 			'socket'        => null,
 			'files_table'   => 'elfinder_file',
 			'tmbPath'       => '',
-			'tmpPath'       => ''
+			'tmpPath'       => '',
+            'user_id'       => ''
 		);
 		$this->options = array_merge($this->options, $opts);
 		$this->options['mimeDetect'] = 'internal';
@@ -93,7 +94,8 @@ class elFinderVolumeMySQL extends elFinderVolumeDriver {
 		||  !$this->options['pass'] 
 		||  !$this->options['db']
 		||  !$this->options['path']
-		||  !$this->options['files_table']) {
+		||  !$this->options['files_table']
+        ||  !$this->options['user_id']) {
 			return false;
 		}
 		
@@ -209,12 +211,12 @@ class elFinderVolumeMySQL extends elFinderVolumeDriver {
             try {
                 $this->db->autocommit(FALSE); // i.e., start transaction
                 $sql = 'INSERT INTO %s (`owner_id`, `mtime`) VALUES ("%s", %d)';
-                $sql = sprintf($sql, 'tb_folder', 1, time());
+                $sql = sprintf($sql, 'tb_folder', $this->options['user_id'], time());
                 if (!($this->query($sql) && $this->db->affected_rows > 0)) {
                     throw new Exception($this->db->error);
                 }
                 $sql = 'INSERT INTO %s (`user_id`, `parent_id`, `folder_id`, `name`, `read`, `write`) VALUES ("%s", "%s", "%s", "%s", "%d", "%d")';
-                $sql = sprintf($sql, 'tb_folder_link', 1, $path, $this->db->insert_id, $this->db->real_escape_string($name), $this->defaults['read'], $this->defaults['write']);
+                $sql = sprintf($sql, 'tb_folder_link', $this->options['user_id'], $path, $this->db->insert_id, $this->db->real_escape_string($name), $this->defaults['read'], $this->defaults['write']);
                 if (!($this->query($sql) && $this->db->affected_rows > 0)) {
                     throw new Exception($this->db->error);
                 }
@@ -233,12 +235,12 @@ class elFinderVolumeMySQL extends elFinderVolumeDriver {
             try {
                 $this->db->autocommit(FALSE); // i.e., start transaction
                 $sql = 'INSERT INTO %s (`owner_id`, `content`, `size`, `mtime`, `mime`) VALUES ("%s", "", 0, %d, "%s")';
-                $sql = sprintf($sql, 'tb_file', 1, time(), $mime);
+                $sql = sprintf($sql, 'tb_file', $this->options['user_id'], time(), $mime);
                 if (!($this->query($sql) && $this->db->affected_rows > 0)) {
                     throw new Exception($this->db->error);
                 }
                 $sql = 'INSERT INTO %s (`user_id`, `parent_id`, `file_id`, `name`, `read`, `write`) VALUES ("%s", "%s", "%s", "%s", "%d", "%d")';
-                $sql = sprintf($sql, 'tb_file_link', 1, $path, $this->db->insert_id, $this->db->real_escape_string($name), $this->defaults['read'], $this->defaults['write']);
+                $sql = sprintf($sql, 'tb_file_link', $this->options['user_id'], $path, $this->db->insert_id, $this->db->real_escape_string($name), $this->defaults['read'], $this->defaults['write']);
                 if (!($this->query($sql) && $this->db->affected_rows > 0)) {
                     throw new Exception($this->db->error);
                 }
@@ -269,9 +271,9 @@ class elFinderVolumeMySQL extends elFinderVolumeDriver {
 	public function search($q, $mimes) {
 		$result = array();
 
-		$sql = 'SELECT f.id, f.parent_id, f.name, f.size, f.mtime AS ts, f.mime, f.read, f.write, f.locked, f.hidden, f.width, f.height, 0 AS dirs 
+		$sql = 'SELECT f.id, f.parent_id, f.name, f.size, f.mtime AS ts, f.mime, f.read, f.write, f.locked, f.hidden, f.width, f.height, 0 AS dirs
 				FROM %s AS f 
-				WHERE f.name RLIKE "%s"';
+				WHERE f.user_id="'.$this->options['user_id'].'" AND f.name RLIKE "%s"';
 		
 		$sql = sprintf($sql, $this->tbf, $this->db->real_escape_string($q));
 		
@@ -425,7 +427,7 @@ class elFinderVolumeMySQL extends elFinderVolumeDriver {
 
         $sql = 'SELECT f.id, f.parent_id, f.name, f.size, f.ts, f.mime, f.read, f.write, f.locked, f.hidden, f.width, f.height, f.dirs
 				FROM vw_cacheDir AS f
-				WHERE f.parent_id="'.$path.'"';
+				WHERE f.parent_id="'.$path.'" AND f.user_id="'.$this->options['user_id'].'"';
 
         $res = $this->query($sql);
 		if ($res) {
@@ -542,7 +544,7 @@ class elFinderVolumeMySQL extends elFinderVolumeDriver {
 	 * @author Dmitry (dio) Levashov
 	 **/
 	protected function _joinPath($dir, $name) {
-		$sql = 'SELECT id FROM '.$this->tbf.' WHERE parent_id="'.$dir.'" AND name="'.$this->db->real_escape_string($name).'"';
+		$sql = 'SELECT id FROM '.$this->tbf.' WHERE parent_id="'.$dir.' AND user_id="'.$this->options['user_id'].'"" AND name="'.$this->db->real_escape_string($name).'"';
 
 		if (($res = $this->query($sql)) && ($r = $res->fetch_assoc())) {
 			$this->updateCache($r['id'], $this->_stat($r['id']));
@@ -649,7 +651,7 @@ class elFinderVolumeMySQL extends elFinderVolumeDriver {
 
         $sql = 'SELECT f.id, f.parent_id, f.name, f.size, f.ts, f.mime, f.read, f.write, f.locked, f.hidden, f.width, f.height, f.dirs
 				FROM vw_stat AS f
-				WHERE f.id="'.$path.'"';
+				WHERE f.id="'.$path.'" AND f.user_id="'.$this->options['user_id'].'"';
 
 		$res = $this->query($sql);
 		
@@ -727,7 +729,7 @@ class elFinderVolumeMySQL extends elFinderVolumeDriver {
 		
 		if ($fp) {
             //if (($res = $this->query('SELECT content FROM '.$this->tbf.' WHERE id="'.$path.'"'))
-            if (($res = $this->query('SELECT content FROM '.'tb_file'.' WHERE id="'.$path.'"'))
+            if (($res = $this->query('SELECT content FROM '.'vw_elfinder_file_file'.' WHERE id="'.$path.'" AND user_id="'.$this->options['user_id'].'"'))
 			&& ($r = $res->fetch_assoc())) {
 				fwrite($fp, $r['content']);
 				rewind($fp);
@@ -822,12 +824,12 @@ class elFinderVolumeMySQL extends elFinderVolumeDriver {
                 }
             }
             $sql = 'INSERT INTO %s (`owner_id`, `content`, `size`, `mtime`, `mime`, `hidden`) SELECT %d, `content`, `size`, %d, `mime`, `hidden` FROM %s WHERE id=%d';
-            $sql = sprintf($sql, 'tb_file', 1, time(), 'tb_file', $source);
+            $sql = sprintf($sql, 'tb_file', $this->options['user_id'], time(), 'tb_file', $source);
             if (!($this->query($sql) && $this->db->affected_rows > 0)) {
                 throw new Exception($this->db->error);
             }
             $sql = 'INSERT INTO %s (`user_id`, `parent_id`, `file_id`, `name`, `read`, `write`) SELECT %d, %d, %d, `name`, `read`, `write` FROM %s WHERE file_id=%d';
-            $sql = sprintf($sql, 'tb_file_link', 1, $targetDir, $this->db->insert_id, 'tb_file_link', $source);
+            $sql = sprintf($sql, 'tb_file_link', $this->options['user_id'], $targetDir, $this->db->insert_id, 'tb_file_link', $source);
             if (!($this->query($sql) && $this->db->affected_rows > 0)) {
                 throw new Exception($this->db->error);
             }
@@ -978,13 +980,13 @@ class elFinderVolumeMySQL extends elFinderVolumeDriver {
                 }
             }
             $sql = 'INSERT INTO %s (`owner_id`, `content`, `size`, `mtime`, `mime`) VALUES ("%s", "%s", %d, %d, "%s")';
-            $sql = sprintf($sql, 'tb_file', 1, $this->db->real_escape_string($content), $size, time(), $mime);
+            $sql = sprintf($sql, 'tb_file', $this->options['user_id'], $this->db->real_escape_string($content), $size, time(), $mime);
             if (!($this->query($sql) && $this->db->affected_rows > 0)) {
                 throw new Exception($this->db->error);
             }
             $inserted_file_id = $this->db->insert_id;
             $sql = 'INSERT INTO %s (`user_id`, `parent_id`, `file_id`, `name`, `read`, `write`) VALUES ("%s", "%s", "%s", "%s", "%d", "%d")';
-            $sql = sprintf($sql, 'tb_file_link', 1, $dir, $this->db->insert_id, $this->db->real_escape_string($name), $this->defaults['read'], $this->defaults['write']);
+            $sql = sprintf($sql, 'tb_file_link', $this->options['user_id'], $dir, $this->db->insert_id, $this->db->real_escape_string($name), $this->defaults['read'], $this->defaults['write']);
             if (!($this->query($sql) && $this->db->affected_rows > 0)) {
                 throw new Exception($this->db->error);
             }
@@ -1024,7 +1026,7 @@ class elFinderVolumeMySQL extends elFinderVolumeDriver {
 	 **/
 	protected function _getContents($path) {
         //return ($res = $this->query(sprintf('SELECT content FROM %s WHERE id=%d', $this->tbf, $path))) && ($r = $res->fetch_assoc()) ? $r['content'] : false;
-        return ($res = $this->query(sprintf('SELECT content FROM %s WHERE id=%d', 'tb_file', $path))) && ($r = $res->fetch_assoc()) ? $r['content'] : false;
+        return ($res = $this->query(sprintf('SELECT content FROM %s WHERE id=%d AND user_id="'.$this->options['user_id'].'"', 'vw_elfinder_file_file', $path))) && ($r = $res->fetch_assoc()) ? $r['content'] : false;
 	}
 	
 	/**

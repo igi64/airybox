@@ -1,4 +1,5 @@
 SELECT  fldl.folder_id AS `id`,
+				usr.id AS `user_id`,
         fldl.parent_id AS `parent_id`,
 		fldl.name AS `name`,
 		0 AS `size`,
@@ -18,8 +19,9 @@ FROM tb_folder_link fldl
 		LEFT JOIN tb_folder AS fld ON fld.id=fldl.folder_id
 WHERE fldl.folder_id = '1' AND usr.email = 'izboran@gmail.com'
 GROUP BY fldl.folder_id
-UNION
+UNION ALL
 SELECT  fl.id AS `id`,
+				usr.id AS `user_id`,
         fll.parent_id AS `parent_id`,
 		fll.name AS `name`,
 		fl.size AS `size`,

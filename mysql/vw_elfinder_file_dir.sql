@@ -1,5 +1,6 @@
 CREATE VIEW vw_elfinder_file_dir AS
 SELECT  fldl.folder_id AS `id`,
+				usr.id AS `user_id`,
         fldl.parent_id AS `parent_id`,
 		fldl.name AS `name`,
 		NULL AS `content`,
