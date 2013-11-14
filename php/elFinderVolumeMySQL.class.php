@@ -438,7 +438,8 @@ class elFinderVolumeMySQL extends elFinderVolumeDriver {
 
         $sql = 'SELECT f.id, f.parent_id, f.name, f.size, f.ts, f.mime, f.read, f.write, f.locked, f.hidden, f.width, f.height, f.dirs
 				FROM vw_cacheDir AS f
-				WHERE f.parent_id="'.$path.'" AND f.user_id="'.$this->options['user_id'].'"';
+				WHERE f.parent_id="'.$path.'" AND f.user_id="'.$this->options['user_id'].'"
+				GROUP BY f.id';
 
         $res = $this->query($sql);
 		if ($res) {
@@ -662,7 +663,8 @@ class elFinderVolumeMySQL extends elFinderVolumeDriver {
 
         $sql = 'SELECT f.id, f.parent_id, f.name, f.size, f.ts, f.mime, f.read, f.write, f.locked, f.hidden, f.width, f.height, f.dirs
 				FROM vw_stat AS f
-				WHERE f.id="'.$path.'" AND f.user_id="'.$this->options['user_id'].'"';
+				WHERE f.id="'.$path.'" AND f.user_id="'.$this->options['user_id'].'"
+				GROUP BY f.id';
 
 		$res = $this->query($sql);
 		

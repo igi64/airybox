@@ -17,7 +17,6 @@ FROM    tb_folder_link fldl
 		LEFT JOIN tb_folder_link AS fldlch ON fldlch.parent_id=fldl.folder_id
 		LEFT JOIN tb_user AS usr ON usr.id=fldl.user_id
 		LEFT JOIN tb_folder AS fld ON fld.id=fldl.folder_id
-GROUP BY fldl.folder_id
 UNION ALL
 SELECT  fll.file_id AS `id`,
 				fll.user_id AS `user_id`,
