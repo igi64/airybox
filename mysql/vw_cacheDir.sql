@@ -1,6 +1,6 @@
 CREATE VIEW vw_cacheDir AS
 SELECT  fldl.folder_id AS `id`,
-				usr.id AS `user_id`,
+				fldl.user_id AS `user_id`,
         fldl.parent_id AS `parent_id`,
 		fldl.name AS `name`,
 		0 AS `size`,
@@ -19,8 +19,8 @@ FROM    tb_folder_link fldl
 		LEFT JOIN tb_folder AS fld ON fld.id=fldl.folder_id
 GROUP BY fldl.folder_id
 UNION ALL
-SELECT  fl.id AS `id`,
-				usr.id AS `user_id`,
+SELECT  fll.file_id AS `id`,
+				fll.user_id AS `user_id`,
         fll.parent_id AS `parent_id`,
 		fll.name AS `name`,
 		fl.size AS `size`,

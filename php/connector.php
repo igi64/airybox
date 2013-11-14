@@ -362,7 +362,7 @@ $opts = array(
 		
 		array(
 			'driver' => 'MySQL',
-		 	'path' => 1,
+		 	'path' => 0,
 		 	// 'treeDeep' => 2,
 		 	// 'socket'          => '/opt/local/var/run/mysql5/mysqld.sock',
             'host'   => '192.168.100.200',
