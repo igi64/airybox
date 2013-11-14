@@ -1,4 +1,4 @@
-CREATE VIEW vw_elfinder_file AS
+CREATE VIEW vw_folder_file AS
 SELECT  fldl.folder_id AS `id`,
 				fldl.user_id AS `user_id`,
         fldl.parent_id AS `parent_id`,

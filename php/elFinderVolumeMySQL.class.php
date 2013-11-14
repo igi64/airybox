@@ -740,7 +740,7 @@ class elFinderVolumeMySQL extends elFinderVolumeDriver {
 		
 		if ($fp) {
             //if (($res = $this->query('SELECT content FROM '.$this->tbf.' WHERE id="'.$path.'"'))
-            if (($res = $this->query('SELECT content FROM '.'vw_elfinder_file_file'.' WHERE id="'.$path.'" AND user_id="'.$this->options['user_id'].'"'))
+            if (($res = $this->query('SELECT content FROM '.'vw_file'.' WHERE id="'.$path.'" AND user_id="'.$this->options['user_id'].'"'))
 			&& ($r = $res->fetch_assoc())) {
 				fwrite($fp, $r['content']);
 				rewind($fp);
@@ -837,7 +837,7 @@ class elFinderVolumeMySQL extends elFinderVolumeDriver {
                 }
             }
             $sql = 'INSERT INTO %s (`owner_id`, `content`, `size`, `mtime`, `mime`, `hidden`) SELECT %d, `content`, `size`, %d, `mime`, `hidden` FROM %s WHERE id=%d AND user_id="'.$this->options['user_id'].'"';
-            $sql = sprintf($sql, 'tb_file', $this->options['user_id'], time(), 'vw_elfinder_file_file', $source);
+            $sql = sprintf($sql, 'tb_file', $this->options['user_id'], time(), 'vw_file', $source);
             if (!($this->query($sql) && $this->db->affected_rows > 0)) {
                 throw new Exception($this->db->error);
             }
@@ -1051,7 +1051,7 @@ class elFinderVolumeMySQL extends elFinderVolumeDriver {
 	 **/
 	protected function _getContents($path) {
         //return ($res = $this->query(sprintf('SELECT content FROM %s WHERE id=%d', $this->tbf, $path))) && ($r = $res->fetch_assoc()) ? $r['content'] : false;
-        return ($res = $this->query(sprintf('SELECT content FROM %s WHERE id=%d AND user_id="'.$this->options['user_id'].'"', 'vw_elfinder_file_file', $path))) && ($r = $res->fetch_assoc()) ? $r['content'] : false;
+        return ($res = $this->query(sprintf('SELECT content FROM %s WHERE id=%d AND user_id="'.$this->options['user_id'].'"', 'vw_file', $path))) && ($r = $res->fetch_assoc()) ? $r['content'] : false;
     }
 	
 	/**

@@ -369,7 +369,7 @@ $opts = array(
 		 	'user' => 'airybox',
 		 	'pass' => 'apassword',
 		 	'db' => 'airybox',
-            'files_table' => 'vw_elfinder_file',
+            'files_table' => 'vw_folder_file',
             /*'user' => 'elfinder',
             'pass' => 'apassword',
             'db' => 'elfinder',
@@ -449,7 +449,7 @@ if (isset($_GET['user_id'])) {
 }
 
 if (empty($user_id)) {
-    $user_id = '1'; // '1' for test
+    $user_id = '2'; // '1' for test
 };
 
 if (!empty($user_id)) {
