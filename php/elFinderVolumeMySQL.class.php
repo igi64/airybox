@@ -98,10 +98,10 @@ class elFinderVolumeMySQL extends elFinderVolumeDriver {
         ||  !$this->options['user_id']) {
 			return false;
 		}
-		
-		
+
 		$this->db = new mysqli($this->options['host'], $this->options['user'], $this->options['pass'], $this->options['db'], $this->options['port'], $this->options['socket']);
-		if ($this->db->connect_error || @mysqli_connect_error()) {
+
+        if ($this->db->connect_error || @mysqli_connect_error()) {
 			return false;
 		}
 		
@@ -221,16 +221,34 @@ class elFinderVolumeMySQL extends elFinderVolumeDriver {
         if ($mime == 'directory') {
             try {
                 $this->db->autocommit(FALSE); // i.e., start transaction
+
+                $sql = 'SELECT COUNT(user_id) FROM tb_folder_link WHERE folder_id="'.$path.'" AND user_id="'.$this->options['user_id'].'"';
+                if (!(($res = $this->query($sql)) && $row = $res->fetch_assoc())) {
+                    throw new Exception('Insufficient user privileges');
+                }
+
                 $sql = 'INSERT INTO %s (`owner_id`, `mtime`) VALUES ("%s", %d)';
                 $sql = sprintf($sql, 'tb_folder', $this->options['user_id'], time());
                 if (!($this->query($sql) && $this->db->affected_rows > 0)) {
                     throw new Exception($this->db->error);
                 }
-                $sql = 'INSERT INTO %s (`user_id`, `parent_id`, `folder_id`, `name`, `read`, `write`) VALUES ("%s", "%s", "%s", "%s", "%d", "%d")';
-                $sql = sprintf($sql, 'tb_folder_link', $this->options['user_id'], $path, $this->db->insert_id, $this->db->real_escape_string($name), $this->defaults['read'], $this->defaults['write']);
-                if (!($this->query($sql) && $this->db->affected_rows > 0)) {
+
+                $inserted_id = $this->db->insert_id;
+
+                $sql = 'SELECT user_id FROM tb_folder_link WHERE folder_id="'.$path.'"';
+                if ($res = $this->query($sql)) {
+                    while ($row = $res->fetch_assoc()) {
+                        $user_id = $row['user_id'];
+                        $sql = 'INSERT INTO %s (`user_id`, `parent_id`, `folder_id`, `name`, `read`, `write`) VALUES ("%s", "%s", "%s", "%s", "%d", "%d")';
+                        $sql = sprintf($sql, 'tb_folder_link', $user_id, $path, $inserted_id, $this->db->real_escape_string($name), $this->defaults['read'], $this->defaults['write']);
+                        if (!($this->query($sql) && $this->db->affected_rows > 0)) {
+                            throw new Exception($this->db->error);
+                        }
+                    }
+                } else {
                     throw new Exception($this->db->error);
                 }
+
                 $this->db->commit();
                 $this->db->autocommit(TRUE); // i.e., end transaction
                 return true;
@@ -245,16 +263,34 @@ class elFinderVolumeMySQL extends elFinderVolumeDriver {
         } else {
             try {
                 $this->db->autocommit(FALSE); // i.e., start transaction
+
+                $sql = 'SELECT COUNT(user_id) FROM tb_folder_link WHERE folder_id="'.$path.'" AND user_id="'.$this->options['user_id'].'"';
+                if (!(($res = $this->query($sql)) && $row = $res->fetch_assoc())) {
+                    throw new Exception('Insufficient user privileges');
+                }
+
                 $sql = 'INSERT INTO %s (`owner_id`, `content`, `size`, `mtime`, `mime`) VALUES ("%s", "", 0, %d, "%s")';
                 $sql = sprintf($sql, 'tb_file', $this->options['user_id'], time(), $mime);
                 if (!($this->query($sql) && $this->db->affected_rows > 0)) {
                     throw new Exception($this->db->error);
                 }
-                $sql = 'INSERT INTO %s (`user_id`, `parent_id`, `file_id`, `name`, `read`, `write`) VALUES ("%s", "%s", "%s", "%s", "%d", "%d")';
-                $sql = sprintf($sql, 'tb_file_link', $this->options['user_id'], $path, $this->db->insert_id, $this->db->real_escape_string($name), $this->defaults['read'], $this->defaults['write']);
-                if (!($this->query($sql) && $this->db->affected_rows > 0)) {
+
+                $inserted_id = $this->db->insert_id;
+
+                $sql = 'SELECT user_id FROM tb_folder_link WHERE folder_id="'.$path.'"';
+                if ($res = $this->query($sql)) {
+                    while ($row = $res->fetch_assoc()) {
+                        $user_id = $row['user_id'];
+                        $sql = 'INSERT INTO %s (`user_id`, `parent_id`, `file_id`, `name`, `read`, `write`) VALUES ("%s", "%s", "%s", "%s", "%d", "%d")';
+                        $sql = sprintf($sql, 'tb_file_link', $user_id, $path, $inserted_id, $this->db->real_escape_string($name), $this->defaults['read'], $this->defaults['write']);
+                        if (!($this->query($sql) && $this->db->affected_rows > 0)) {
+                            throw new Exception($this->db->error);
+                        }
+                    }
+                } else {
                     throw new Exception($this->db->error);
                 }
+
                 $this->db->commit();
                 $this->db->autocommit(TRUE); // i.e., end transaction
                 return true;
@@ -831,6 +867,17 @@ class elFinderVolumeMySQL extends elFinderVolumeDriver {
         // folder share
         try {
             $this->db->autocommit(FALSE); // i.e., start transaction
+
+            $sql = 'SELECT COUNT(user_id) FROM tb_file_link WHERE file_id="'.$source.'" AND user_id="'.$this->options['user_id'].'"';
+            if (!(($res = $this->query($sql)) && $row = $res->fetch_assoc())) {
+                throw new Exception('Insufficient user privileges');
+            }
+
+            $sql = 'SELECT COUNT(user_id) FROM tb_folder_link WHERE folder_id="'.$targetDir.'" AND user_id="'.$this->options['user_id'].'"';
+            if (!(($res = $this->query($sql)) && $row = $res->fetch_assoc())) {
+                throw new Exception('Insufficient user privileges');
+            }
+
             if ($id > 0) {
                 $sql = 'DELETE FROM %s WHERE id=(SELECT file_id FROM %s WHERE file_id =%d AND user_id="'.$this->options['user_id'].'") LIMIT 1';
                 $sql = sprintf($sql, 'tb_file', 'tb_file_link', $id);
@@ -838,16 +885,29 @@ class elFinderVolumeMySQL extends elFinderVolumeDriver {
                     throw new Exception($this->db->error);
                 }
             }
+
             $sql = 'INSERT INTO %s (`owner_id`, `content`, `size`, `mtime`, `mime`, `hidden`) SELECT %d, `content`, `size`, %d, `mime`, `hidden` FROM %s WHERE id=%d AND user_id="'.$this->options['user_id'].'"';
             $sql = sprintf($sql, 'tb_file', $this->options['user_id'], time(), 'vw_file', $source);
             if (!($this->query($sql) && $this->db->affected_rows > 0)) {
                 throw new Exception($this->db->error);
             }
-            $sql = 'INSERT INTO %s (`user_id`, `parent_id`, `file_id`, `name`, `read`, `write`) SELECT %d, %d, %d, `name`, `read`, `write` FROM %s WHERE file_id=%d AND user_id="'.$this->options['user_id'].'"';
-            $sql = sprintf($sql, 'tb_file_link', $this->options['user_id'], $targetDir, $this->db->insert_id, 'tb_file_link', $source);
-            if (!($this->query($sql) && $this->db->affected_rows > 0)) {
+
+            $inserted_id = $this->db->insert_id;
+
+            $sql = 'SELECT user_id FROM tb_folder_link WHERE folder_id="'.$targetDir.'"';
+            if ($res = $this->query($sql)) {
+                while ($row = $res->fetch_assoc()) {
+                    $user_id = $row['user_id'];
+                    $sql = 'INSERT INTO %s (`user_id`, `parent_id`, `file_id`, `name`, `read`, `write`) SELECT %d, %d, %d, `name`, `read`, `write` FROM %s WHERE file_id=%d AND user_id="'.$this->options['user_id'].'"';
+                    $sql = sprintf($sql, 'tb_file_link', $user_id, $targetDir, $inserted_id, 'tb_file_link', $source);
+                    if (!($this->query($sql) && $this->db->affected_rows > 0)) {
+                        throw new Exception($this->db->error);
+                    }
+                }
+            } else {
                 throw new Exception($this->db->error);
             }
+
             $this->db->commit();
             $this->db->autocommit(TRUE); // i.e., end transaction
 
@@ -882,14 +942,100 @@ class elFinderVolumeMySQL extends elFinderVolumeDriver {
 		//$sql = sprintf($sql, $this->tbf, $targetDir, $this->db->real_escape_string($name), $source);
 
         // folder share
-        if ($source < 1000000001) {
-            $sql = 'UPDATE %s SET parent_id=%d, name="%s" WHERE folder_id=%d AND user_id="'.$this->options['user_id'].'" LIMIT 1';
-            $sql = sprintf($sql, 'tb_folder_link', $targetDir, $this->db->real_escape_string($name), $source);
-        } else {
-            $sql = 'UPDATE %s SET parent_id=%d, name="%s" WHERE file_id=%d AND user_id="'.$this->options['user_id'].'" LIMIT 1';
-            $sql = sprintf($sql, 'tb_file_link', $targetDir, $this->db->real_escape_string($name), $source);
+        try {
+            $this->db->autocommit(FALSE); // i.e., start transaction
+
+            $sql = 'SELECT COUNT(user_id) FROM tb_file_link WHERE file_id="'.$source.'" AND user_id="'.$this->options['user_id'].'"';
+            if (!(($res = $this->query($sql)) && $row = $res->fetch_assoc())) {
+                throw new Exception('Insufficient user privileges');
+            }
+
+            $sql = 'SELECT COUNT(user_id) FROM tb_folder_link WHERE folder_id="'.$targetDir.'" AND user_id="'.$this->options['user_id'].'"';
+            if (!(($res = $this->query($sql)) && $row = $res->fetch_assoc())) {
+                throw new Exception('Insufficient user privileges');
+            }
+
+            if ($source < 1000000001) {
+                $sql = 'DELETE FROM %s WHERE folder_id=%d';
+                $sql = sprintf($sql, 'tb_folder_link', $source);
+
+                if ($this->query($sql) && $this->db->affected_rows > 0) {
+                    $sql = 'SELECT user_id FROM tb_folder_link WHERE folder_id="'.$targetDir.'"';
+                    if ($res = $this->query($sql)) {
+                        while ($row = $res->fetch_assoc()) {
+                            $user_id = $row['user_id'];
+                            $sql = 'INSERT INTO %s (`user_id`, `parent_id`, `folder_id`, `name`, `read`, `write`) VALUES ("%s", "%s", "%s", "%s", "%d", "%d")';
+                            $sql = sprintf($sql, 'tb_folder_link', $user_id, $targetDir, $source, $this->db->real_escape_string($name), $this->defaults['read'], $this->defaults['write']);
+                            if (!($this->query($sql) && $this->db->affected_rows > 0)) {
+                                throw new Exception($this->db->error);
+                            }
+                        }
+                    } else {
+                        throw new Exception($this->db->error);
+                    }
+                } else {
+                    throw new Exception($this->db->error);
+                }
+
+                $sql = 'UPDATE %s SET owner_id=%d WHERE id=%d LIMIT 1';
+                $sql = sprintf($sql, 'tb_folder', $this->options['user_id'], $source);
+
+                //if(!($this->query($sql) && $this->db->affected_rows > 0)){ // this->db->affected_rows can return zero (mysqli/client_found_rows problem)
+                if(!$this->query($sql)){
+                    throw new Exception($this->db->error);
+                }
+
+                //$sql = 'UPDATE %s SET parent_id=%d, name="%s" WHERE folder_id=%d AND user_id="'.$this->options['user_id'].'" LIMIT 1';
+                //$sql = sprintf($sql, 'tb_folder_link', $targetDir, $this->db->real_escape_string($name), $source);
+            } else {
+                $sql = 'DELETE FROM %s WHERE file_id=%d';
+                $sql = sprintf($sql, 'tb_file_link', $source);
+
+                if ($this->query($sql) && $this->db->affected_rows > 0) {
+                    $sql = 'SELECT user_id FROM tb_folder_link WHERE folder_id="'.$targetDir.'"';
+                    if ($res = $this->query($sql)) {
+                        while ($row = $res->fetch_assoc()) {
+                            $user_id = $row['user_id'];
+                            $sql = 'INSERT INTO %s (`user_id`, `parent_id`, `file_id`, `name`, `read`, `write`) VALUES ("%s", "%s", "%s", "%s", "%d", "%d")';
+                            $sql = sprintf($sql, 'tb_file_link', $user_id, $targetDir, $source, $this->db->real_escape_string($name), $this->defaults['read'], $this->defaults['write']);
+                            if (!($this->query($sql) && $this->db->affected_rows > 0)) {
+                                throw new Exception($this->db->error);
+                            }
+                        }
+                    } else {
+                        throw new Exception($this->db->error);
+                    }
+                } else {
+                    throw new Exception($this->db->error);
+                }
+
+                $sql = 'UPDATE %s SET owner_id=%d WHERE id=%d LIMIT 1';
+                $sql = sprintf($sql, 'tb_file', $this->options['user_id'], $source);
+
+                //if(!($this->query($sql) && $this->db->affected_rows > 0)){ // this->db->affected_rows can return zero (mysqli/client_found_rows problem)
+                if(!$this->query($sql)){
+                    throw new Exception($this->db->error);
+                }
+
+                //$sql = 'UPDATE %s SET parent_id=%d, name="%s" WHERE file_id=%d AND user_id="'.$this->options['user_id'].'" LIMIT 1';
+                //$sql = sprintf($sql, 'tb_file_link', $targetDir, $this->db->real_escape_string($name), $source);
+            }
+
+            $this->db->commit();
+            $this->db->autocommit(TRUE); // i.e., end transaction
+
+            return true;
         }
-		return $this->query($sql) && $this->db->affected_rows > 0 ? $source : false;
+        catch ( Exception $e ) {
+            // before rolling back the transaction, you'd want
+            // to make sure that the exception was db-related
+            $this->db->rollback();
+            $this->db->autocommit(TRUE); // i.e., end transaction
+
+            unset($content);
+
+            return false;
+        }
 	}
 		
 	/**
@@ -999,6 +1145,12 @@ class elFinderVolumeMySQL extends elFinderVolumeDriver {
         // folder share
         try {
             $this->db->autocommit(FALSE); // i.e., start transaction
+
+            $sql = 'SELECT COUNT(user_id) FROM tb_folder_link WHERE folder_id="'.$dir.'" AND user_id="'.$this->options['user_id'].'"';
+            if (!(($res = $this->query($sql)) && $row = $res->fetch_assoc())) {
+                throw new Exception('Insufficient user privileges');
+            }
+
             if ($id > 0) {
                 $sql = 'DELETE FROM %s WHERE id=(SELECT file_id FROM %s WHERE file_id =%d AND user_id="'.$this->options['user_id'].'") LIMIT 1';
                 $sql = sprintf($sql, 'tb_file', 'tb_file_link', $id);
@@ -1011,12 +1163,23 @@ class elFinderVolumeMySQL extends elFinderVolumeDriver {
             if (!($this->query($sql) && $this->db->affected_rows > 0)) {
                 throw new Exception($this->db->error);
             }
+
             $inserted_file_id = $this->db->insert_id;
-            $sql = 'INSERT INTO %s (`user_id`, `parent_id`, `file_id`, `name`, `read`, `write`) VALUES ("%s", "%s", "%s", "%s", "%d", "%d")';
-            $sql = sprintf($sql, 'tb_file_link', $this->options['user_id'], $dir, $this->db->insert_id, $this->db->real_escape_string($name), $this->defaults['read'], $this->defaults['write']);
-            if (!($this->query($sql) && $this->db->affected_rows > 0)) {
+
+            $sql = 'SELECT user_id FROM tb_folder_link WHERE folder_id="'.$dir.'"';
+            if ($res = $this->query($sql)) {
+                while ($row = $res->fetch_assoc()) {
+                    $user_id = $row['user_id'];
+                    $sql = 'INSERT INTO %s (`user_id`, `parent_id`, `file_id`, `name`, `read`, `write`) VALUES ("%s", "%s", "%s", "%s", "%d", "%d")';
+                    $sql = sprintf($sql, 'tb_file_link', $user_id, $dir, $inserted_file_id, $this->db->real_escape_string($name), $this->defaults['read'], $this->defaults['write']);
+                    if (!($this->query($sql) && $this->db->affected_rows > 0)) {
+                        throw new Exception($this->db->error);
+                    }
+                }
+            } else {
                 throw new Exception($this->db->error);
             }
+
             $this->db->commit();
             $this->db->autocommit(TRUE); // i.e., end transaction
 
