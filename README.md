@@ -11,4 +11,5 @@ Features:
 5. Files
 6. Contacts
 7. Calendar
-8. Workflow
+8. Forms
+9. Workflow
