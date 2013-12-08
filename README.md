@@ -1,7 +1,7 @@
 AiryBox
 =======
 
-A Private Cloud Data Box.
+An application framework for IBP technology.
 
 Features:
 1. Dashboard
