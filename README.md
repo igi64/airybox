@@ -1,7 +1,7 @@
 AiryBox
 =======
 
-An application framework for IBP technology.
+A multi-party application framework for IBP technology.
 
 Features:  
 1. Dashboard  
