@@ -115,7 +115,7 @@ apps.get('/', function(req, res) {
 
 apps.get('/users', user.list);
 
-apps.post('/login', function(req, res) {
+/*apps.post('/login', function(req, res) {
 	//var self = passport;
 	var accessToken = req.body.access_token;
 	var api_param = req.param("api");
@@ -162,7 +162,7 @@ apps.get('/logout', function(req, res) {
 	req.session.email = '';
 	//res.redirect('/');
 	res.send('{"ok":"Unauthenticated identity."}');
-});
+});*/
 
 http.createServer(app).listen(app.get('port'), function(){
 	console.log("Express server listening on port " + app.get('port'));
