@@ -1,13 +1,14 @@
 var OAuth = OAuth || {};
 
 (function (w, d) {
-  var SHARE_CLIENT_ID = 'xxxxxxxxxxxx';
+  var AIRYBOX_SHARE_CLIENT_ID = 'xxxxxxxxxxxx';
 	var AIRYBOX_CLIENT_ID = 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.apps.googleusercontent.com';
 	var AIRYBOX_SCOPES = 'https://www.googleapis.com/auth/drive https://www.googleapis.com/auth/drive.install';
-	var AIRYKEY_CLIENT_ID = 'xxxxxxxxxxxx.apps.googleusercontent.com';
-	var AIRYKEY_SCOPES = 'https://www.googleapis.com/auth/drive.metadata.readonly';
 
-	var API_KEY = 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx';
+  var AIRYBOX_API_KEY = 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx';
+
+  var AIRYKEY_CLIENT_ID = 'xxxxxxxxxxxx.apps.googleusercontent.com';
+	var AIRYKEY_SCOPES = 'https://www.googleapis.com/auth/drive.metadata.readonly';
 
   var DOMAIN_NAME_AIRYKEY = 'airykey.org';
 
@@ -364,11 +365,11 @@ var OAuth = OAuth || {};
 	}
 
 	OAuth.do_airyboxInitShare = function() {
-    share = new gapi.drive.share.ShareClient(SHARE_CLIENT_ID);
+    share = new gapi.drive.share.ShareClient(AIRYBOX_SHARE_CLIENT_ID);
 	}
 
 	OAuth.do_airyboxInitAuth = function () {
-		gapi.client.setApiKey(API_KEY);
+		gapi.client.setApiKey(AIRYBOX_API_KEY);
 
 		gapi.auth.init(OAuth.do_airyboxCheckAuth);
 	}

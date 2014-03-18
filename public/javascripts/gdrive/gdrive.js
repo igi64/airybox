@@ -1,8 +1,8 @@
-var CLIENT_ID = 'xxxxxxxxxxxx.apps.googleusercontent.com';
+var AIRYBOX_CLIENT_ID = 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.apps.googleusercontent.com';
 var SCOPES = 'https://www.googleapis.com/auth/drive';
 
 var GDrive = function (gapi, clientid) {
-    this.client_ID = clientid || CLIENT_ID;
+    this.client_ID = clientid || AIRYBOX_CLIENT_ID;
     this.scopes = SCOPES;
     this.gapi = gapi;
     this.cors = new CORS(gapi);
