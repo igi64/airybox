@@ -1,8 +1,8 @@
-var CLIENTID = 'xxxxxxxxxxx.apps.googleusercontent.com';
+var CLIENT_ID = 'xxxxxxxxxxxx.apps.googleusercontent.com';
 var SCOPES = 'https://www.googleapis.com/auth/drive';
 
 var GDrive = function (gapi, clientid) {
-    this.client_ID = clientid || CLIENTID;
+    this.client_ID = clientid || CLIENT_ID;
     this.scopes = SCOPES;
     this.gapi = gapi;
     this.cors = new CORS(gapi);
@@ -312,7 +312,7 @@ GDrive.prototype.update = function (file_id, fileMeta, fileData, callback) {
     };
     console.log("567");
     this.cors.putMultiPart(request, poster.boundary, function(err, gFile){
-    	console.log("HEEEELP!");
+    	console.log("putMultiPart");
         callback(null, that._convertFilesToOrion([gFile])[0]);
     });
 };

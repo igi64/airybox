@@ -1,20 +1,21 @@
 var OAuth = OAuth || {};
 
 (function (w, d) {
-	var airyboxClientId = 'xxxxxxxxxxx.apps.googleusercontent.com';
-	var airyboxScopes = 'https://www.googleapis.com/auth/drive https://www.googleapis.com/auth/drive.install';
-	var airykeyClientId = 'xxxxxxxxxxxx.apps.googleusercontent.com';
-	var airykeyScopes = 'https://www.googleapis.com/auth/drive.metadata.readonly';
+  var SHARE_CLIENT_ID = 'xxxxxxxxxxxx';
+	var AIRYBOX_CLIENT_ID = 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.apps.googleusercontent.com';
+	var AIRYBOX_SCOPES = 'https://www.googleapis.com/auth/drive https://www.googleapis.com/auth/drive.install';
+	var AIRYKEY_CLIENT_ID = 'xxxxxxxxxxxx.apps.googleusercontent.com';
+	var AIRYKEY_SCOPES = 'https://www.googleapis.com/auth/drive.metadata.readonly';
 
-	var apiKey = 'AIzaSyANpqLCj25jiXFhHiRErwehgVPitAIVIc4';
+	var API_KEY = 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx';
 
-    var DOMAIN_NAME_AIRYKEY = 'airykey.org';
+  var DOMAIN_NAME_AIRYKEY = 'airykey.org';
 
 	var SIGNOUT_LABEL = 'Sign Out';
 	var SIGNOUTFROM_LABEL = 'Sign Out: ';
 	var AUTHENTICATEWITHGOOGLE_LABEL = 'Authenticate with Google';
 
-	var accountBalanceFileName = 'AccountBalance2.txt';
+	var accountBalanceFileName = 'AccountBalanceX.txt';
 	var accountBalanceFileID = '';
 
 	var share = null;
@@ -363,21 +364,21 @@ var OAuth = OAuth || {};
 	}
 
 	OAuth.do_airyboxInitShare = function() {
-		share = new gapi.drive.share.ShareClient('00000000000');
+    share = new gapi.drive.share.ShareClient(SHARE_CLIENT_ID);
 	}
 
 	OAuth.do_airyboxInitAuth = function () {
-		gapi.client.setApiKey(apiKey);
+		gapi.client.setApiKey(API_KEY);
 
 		gapi.auth.init(OAuth.do_airyboxCheckAuth);
 	}
 
 	OAuth.do_airyboxCheckAuth = function () {
-		gapi.auth.authorize({client_id: airyboxClientId, scope: airyboxScopes, immediate: true}, OAuth.handle_airyboxAuthResult);
+		gapi.auth.authorize({client_id: AIRYBOX_CLIENT_ID, scope: AIRYBOX_SCOPES, immediate: true}, OAuth.handle_airyboxAuthResult);
 	}
 
 	OAuth.do_airykeyCheckAuth = function () {
-		gapi.auth.authorize({client_id: airykeyClientId, scope: airykeyScopes, immediate: true}, OAuth.handle_airykeyAuthResult);
+		gapi.auth.authorize({client_id: AIRYKEY_CLIENT_ID, scope: AIRYKEY_SCOPES, immediate: true}, OAuth.handle_airykeyAuthResult);
 	}
 
 	OAuth.handle_airyboxSignInClick = function(event) {
@@ -385,7 +386,7 @@ var OAuth = OAuth || {};
 		authPermissionId.value = "";
 		authIdentity.value = "";
 
-		gapi.auth.authorize({client_id: airyboxClientId, scope: airyboxScopes, immediate: false}, OAuth.handle_airyboxAuthResult);
+		gapi.auth.authorize({client_id: AIRYBOX_CLIENT_ID, scope: AIRYBOX_SCOPES, immediate: false}, OAuth.handle_airyboxAuthResult);
 		return false;
 	}
 
@@ -394,7 +395,7 @@ var OAuth = OAuth || {};
 		authPermissionId.value = "";
 		authIdentity.value = "";
 
-		gapi.auth.authorize({client_id: airykeyClientId, scope: airykeyScopes, immediate: false}, OAuth.handle_airykeyAuthResult);
+		gapi.auth.authorize({client_id: AIRYKEY_CLIENT_ID, scope: AIRYKEY_SCOPES, immediate: false}, OAuth.handle_airykeyAuthResult);
 		return false;
 	}
 
