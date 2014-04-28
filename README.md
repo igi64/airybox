@@ -1,4 +1,4 @@
 AiryBox
 =======
 
-An Identity-Based Privacy (IBP) Cloud Storage.  
+Identity-Based Privacy (IBP) Resource Server.  
