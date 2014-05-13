@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>AiryBox</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css">
+  <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.icon-large.min.css">
+  <link rel="stylesheet" href="bower_components/font-awesome/css/font-awesome.css">
+  <link rel="stylesheet" href="bower_components/bootstrap-social/bootstrap-social.css">
+  <style type="text/css">
+    body {
+      background-color: #f8f8f8;
+    }
+
+    /* Left-side bullets and large logo */
+
+    .logo-align {
+      margin-top: 5%;
+      margin-bottom: 10%;
+      margin-left: 5%;
+      max-width: 75%;
+    }
+
+    .logo-align .logo-info {
+      margin-bottom: 40px;
+      margin-left: 5px;
+      margin-top: 25px;
+      font-size: 18px;
+      line-height: 20px;
+    }
+
+    .logo-align .media {
+      margin-top: 35px;
+    }
+
+    .logo-align .media img {
+      margin-right: 10px;
+    }
+
+  </style>
+</head>
+<body>
+<div class="navbar navbar-default navbar-static-top">
+  <div class="container visible-xs">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="/">
+        <img class="brand-image" src="images/logo.png" alt="AiryBox">
+      </a>
+    </div>
+  </div>
+</div>
+<div class="container">
+  <div class="row">
+    <div class="col-sm-6">
+      <div class="logo-align hidden-xs">
+        <a href="/">
+          <img src="images/logo_large.png" alt="AiryBox"/>
+        </a>
+
+        <h1 class="logo-info">
+          Secure electronic data delivery service
+        </h1>
+
+        <div class="media">
+          <div class="pull-left">
+            <img class="media-object" src="images/glyphicons_229_retweet_2.png" alt="Retweet" style="margin-right: 8px"/>
+          </div>
+          <div class="media-body">
+            <strong>Send and receive files securely</strong><br>
+            Determine who is accessing files, as well as where and when.
+          </div>
+        </div>
+        <div class="media">
+          <div class="pull-left">
+            <img class="media-object" src="images/glyphicons_203_lock.png" alt="Padlock" style="margin-right: 20px;"/>
+          </div>
+          <div class="media-body">
+            <strong>Meet SOX, HIPAA and PCI-DSS standards</strong><br>
+            Protect intellectual property and personally identifying information against accidental or malicious disclosure.
+          </div>
+        </div>
+        <div class="media">
+          <div class="pull-left">
+            <img class="media-object" src="images/glyphicons_044_keys.png" alt="Keys" style="margin-right: 17px;"/>
+          </div>
+          <div class="media-body">
+            <strong>User-Managed Access</strong><br>
+            Revise usage rights or revoke access to files at any time.
+          </div>
+        </div>
+        <div class="media">
+          <div class="pull-left">
+            <img class="media-object" src="images/glyphicons_087_log_book.png" alt="Log Book" style="margin-right: 19px;"/>
+          </div>
+          <div class="media-body">
+            <strong>Audit and Visibility</strong><br>
+            Monitor the use of protected files through detailed audit logs.
+            <!--Provides a full audit log of file transfer activity.-->
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-6">
+      <h2>Sign In</h2>
+
+      <p>
+        To use the AiryBox service, Sign in with your Google account or with any OpenID Connect provider.
+      </p>
+
+      <form action="/signin" method="post" style="width: 70%">
+        <p class="social-signin">
+          <!--a class="btn btn-sm btn-social btn-google-plus" href="/signin/google">
+            <i class="fa fa-google-plus"></i> <strong>Sign in with Google</strong>
+          </a-->
+          <a href="/auth/google/login" class="btn btn-danger"><span class="fa fa-google-plus"></span> Google+</a>
+          <div class="input-group">
+                      <span class="input-group-btn">
+                          <input type="submit" class="btn btn-warning" value="OpenID Connect" />
+                      </span>
+            <input name="emailField" id="emailField" type="email" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$" class="form-control" placeholder="Enter your email address"/>
+          </div>
+        </p>
+      </form>
+
+      <h2>Sign Up</h2>
+
+      <p>
+        You can easily Sign up for the AiryBox service using our OpenID Connect provider. Enter your email address, create a password and press Sign Up button!
+      </p>
+
+      <form action="/signup" method="post" style="width: 50%">
+        <div class="form-group">
+          <label for="email">Email address</label>
+          <input type="email" class="form-control" id="email" name="email" placeholder="Enter your email address">
+        </div>
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input type="password" class="form-control" id="password" name="password" placeholder="Password">
+        </div>
+        <div class="checkbox">
+          <label>
+            <input type="checkbox" id="rememberme" checked> Remember me
+          </label>
+        </div>
+        <p class="help-block" style="color: darkred; font-weight: bold;"></p>
+        <button type="submit" class="btn btn-default">Sign Up</button>
+      </form>
+
+    </div>
+  </div>
+  <hr>
+  <footer>
+    <div id="copyright">
+      Copyright &copy; 2011-2014 <a href="http://igi64.github.io/">Igor Zboran</a>
+    </div>
+  </footer>
+</div>
+
+<script src="bower_components/jquery/dist/jquery.js"></script>
+<script src="bower_components/bootstrap/dist/js/bootstrap.js"></script>
+<script>
+  // send form data with AJAX and store the incoming access token before redirecting user to index page
+  $('form').submit(function (event) {
+    event.preventDefault();
+    $.ajax({
+      type: 'POST',
+      url: '/signin',
+      data: JSON.stringify({email: $('#email').val(), password: $('#password').val()}),
+      contentType: 'application/json',
+      dataType: 'json',
+      success: function (data) {
+        var storage = $("#rememberme").is(':checked') ? window.localStorage : window.sessionStorage;
+        storage.token = data.token;
+        storage.user = JSON.stringify(data.user);
+        window.location.replace('/');
+      },
+      error: function (res) {
+        $('form p.help-block').text(res.responseText);
+      }
+    });
+  });
+</script>
+</body>
+</html>
